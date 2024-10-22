@@ -269,16 +269,21 @@
       $(".mobile-menu__wrapper").removeClass("nav-fade-active");
     });
 
-    $(".close-mobile-menu, .mobile-menu__backdrop, .mobile-menu__list li a").on("click", function () {
-      setTimeout(function () {
-        $(".mobile-menu").removeClass("show-menu");
-      }, 900);
-      setTimeout(function () {
-        $(".mobile-menu__backdrop").removeClass("mobile-menu__backdrop-active");
-      }, 1100);
+    $(".close-mobile-menu, .mobile-menu__backdrop, .mobile-menu__list li a").on(
+      "click",
+      function () {
+        setTimeout(function () {
+          $(".mobile-menu").removeClass("show-menu");
+        }, 900);
+        setTimeout(function () {
+          $(".mobile-menu__backdrop").removeClass(
+            "mobile-menu__backdrop-active"
+          );
+        }, 1100);
 
-      $(".mobile-menu__wrapper").addClass("nav-fade-active");
-    });
+        $(".mobile-menu__wrapper").addClass("nav-fade-active");
+      }
+    );
 
     /**
      * ======================================
@@ -602,4 +607,229 @@
       });
     });
   });
+
+  (() => {
+    const slideImages = [
+      {
+        img: "/assets/images/hero/jovenes.jpg",
+        title: "Jóvenes",
+        description:
+          "Contamos con Métodos Avanzados de Aprendizaje didácticos e innovadores",
+      },
+      {
+        img: "/assets/images/hero/niños.jpg",
+        title: "Niños",
+        description:
+          "Contamos con Métodos Avanzados de Aprendizaje didácticos e innovadores. Para capacitar estudiantes, profesionales, empresarios.",
+      },
+      {
+        img: "/assets/images/hero/adultos.jpg",
+        title: "Adultos",
+        description: "Para capacitar estudiantes, profesionales, empresarios..",
+      },
+      {
+        img: "/assets/images/hero/jovenes.jpg",
+        title: "Jóvenes",
+        description:
+          "Contamos con Métodos Avanzados de Aprendizaje didácticos e innovadores",
+      },
+      {
+        img: "/assets/images/hero/niños.jpg",
+        title: "Niños",
+        description:
+          "Contamos con Métodos Avanzados de Aprendizaje didácticos e innovadores. Para capacitar estudiantes, profesionales, empresarios.",
+      },
+      {
+        img: "/assets/images/hero/adultos.jpg",
+        title: "Adultos",
+        description: "Para capacitar estudiantes, profesionales, empresarios..",
+      },
+    ];
+
+    const createHtmlStructure = (sliderSelector, images) => {
+      const parent = document.querySelector(sliderSelector, images);
+
+      images.forEach((slideImg, index) => {
+        const { img, title, description } = slideImg;
+        const slideItem = `
+        <div
+          class="item"
+          style="background-image: url('${img}')"
+          data-attribute="${index}"
+        >
+          <div class="content ">
+            <h2 class="mil-head1 mil-mb60 mil-up text-primary fw-bold"></h2>
+            <span class="sub-title-two text-primary fw-bold">
+                IQMAX
+            </span>
+            <h2 class="title title-animation fw-light" style="text-transform: uppercase !important;">
+                ${title}</h2>
+            <p class="mil-text-md mil-deco-text mil-shortened mil-up">${description}</p><br/>
+            <a class="mil-btn mil-a1 mil-c-gone">Ver más</a>
+          </div>
+        </div>
+        `;
+        const divFragment = document
+          .createRange()
+          .createContextualFragment(slideItem);
+        parent.appendChild(divFragment);
+      });
+
+      const html = `
+      <div class="buttons">
+       <div class="buttons">
+        <button class="prev"><i class="fas fa-chevron-left"></i></button>
+        <button class="next"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      </div>
+      `;
+      const fragment = document.createRange().createContextualFragment(html);
+      parent.parentElement.appendChild(fragment);
+    };
+
+    createHtmlStructure(".slider", slideImages);
+
+    const $slider = document.querySelector(".slider");
+    const $next = document.querySelector(".next");
+    const $prev = document.querySelector(".prev");
+
+    $next.addEventListener("click", () => {
+      const items = document.querySelectorAll(".item");
+      $slider.appendChild(items[0]);
+    });
+
+    $prev.addEventListener("click", () => {
+      const items = document.querySelectorAll(".item");
+      $slider.prepend(items[items.length - 1]);
+    });
+  })();
+
+  /* cards flo */
+  (() => {
+    let stackAreas = document.querySelectorAll(".stack-area");
+
+    function rotateCards(cards, index) {
+      let angle = 0;
+      let yOffsetActive = -300;
+      let yOffsetInactive = -50;
+      cards.forEach((card, i) => {
+        if (i < index) {
+          gsap.to(card, {
+            xPercent: -50,
+            yPercent: yOffsetActive,
+            rotation: -48,
+            duration: 0.5,
+            ease: "power2.out",
+          });
+        } else {
+          gsap.to(card, {
+            xPercent: -50,
+            yPercent: yOffsetInactive,
+            rotation: angle,
+            duration: 0.5,
+            ease: "power2.out",
+          });
+          angle -= 10;
+        }
+      });
+    }
+
+    stackAreas.forEach((stackArea) => {
+      let cards = stackArea.querySelectorAll(".card");
+      let n = cards.length;
+
+      ScrollTrigger.create({
+        trigger: stackArea,
+        start: "top top",
+        end: () => `+=${n * window.innerHeight * 0.5}`,
+        pin: true,
+        scrub: true,
+        anticipatePin: 1,
+        onUpdate: (self) => {
+          let index = Math.floor(self.progress * (n - 1));
+          rotateCards(cards, index);
+        },
+        markers: false,
+      });
+
+      // Rotación inicial
+      rotateCards(cards, -1);
+    });
+
+    function adjust() {
+      let windowWidth = window.innerWidth;
+      let leftElements = document.querySelectorAll(".left");
+      leftElements.forEach((left, index) => {
+        left.remove();
+        if (windowWidth < 800) {
+          stackAreas[index].insertAdjacentElement("beforebegin", left);
+        } else {
+          stackAreas[index].insertAdjacentElement("afterbegin", left);
+        }
+      });
+    }
+
+    adjust();
+    window.addEventListener("resize", adjust);
+
+    window.addEventListener("resize", () => {
+      ScrollTrigger.refresh();
+    });
+  })();
+
+  // video modal
+  const openModalBtns = document.querySelectorAll(".video-btn");
+  const modal = document.querySelector(".modal");
+  const video = modal.querySelector("video");
+  const closeBtn = modal.querySelector(".close-btn");
+
+  function openModal(videoSrc) {
+    if (videoSrc) {
+      video.src = videoSrc;
+      modal.showModal();
+      modal.style.animation = "fadeIn 500ms";
+
+      setTimeout(() => {
+        video
+          .play()
+          .catch((e) => console.error("Error al reproducir el video:", e));
+      }, 100);
+    } else {
+      console.error("Error: No se proporcionó una fuente de video válida.");
+    }
+  }
+
+  function closeModal() {
+    modal.style.animation = "fadeOut 500ms forwards";
+    modal.addEventListener(
+      "animationend",
+      () => {
+        modal.close();
+        video.pause();
+        video.src = "";
+      },
+      { once: true }
+    );
+  }
+
+  if (openModalBtns.length > 0 && modal && video) {
+    openModalBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const videoSrc = btn.getAttribute("data-video-src");
+        openModal(videoSrc);
+      });
+    });
+
+    closeBtn.addEventListener("click", closeModal);
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+  } else {
+    console.error(
+      "Error: No se encontraron los elementos necesarios para el modal de video."
+    );
+  }
 })(jQuery);

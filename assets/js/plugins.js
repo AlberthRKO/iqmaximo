@@ -1005,6 +1005,25 @@
         });
       }
     }
+    if ($(".cmn-banner").length > 0) {
+      if (device_width >= 768) {
+        var tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".cmn-banner",
+            start: "top top",
+            end: "+=20%",
+            scrub: 1,
+            pin: false,
+          },
+        });
+        tl.to(".cmn-banner .thumb-right h2,h1", {
+          y: "-190px",
+          x: "50px",
+          scale: 1.1,
+          duration: 2,
+        });
+      }
+    }
 
     /**
      * ======================================
@@ -1327,7 +1346,7 @@
           opacity: 0,
         },
         {
-          scale: 1,
+          scale: 1.1,
           opacity: 1,
           duration: 1.5,
           scrollTrigger: {
