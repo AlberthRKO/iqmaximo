@@ -9394,6 +9394,7 @@ span {
 .mil-p-0-40 .upcoming-movie-box-items .movie-image {
   position: relative;
   overflow: hidden;
+  height: 350px;
   transition: transform 300ms ease;
 }
 
